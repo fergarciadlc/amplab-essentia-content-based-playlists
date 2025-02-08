@@ -1,8 +1,10 @@
 # tests/extractors/test_rhythm.py
-import pytest
-import numpy as np
 import essentia.standard as es
+import numpy as np
+import pytest
+
 from src.audio_analysis.extractors.rhythm import extract_rhythm_features
+
 
 @pytest.fixture
 def sample_audio_mono():
@@ -11,10 +13,11 @@ def sample_audio_mono():
     # and load them. Here we just create an array of zeros.
     return np.zeros(44100, dtype=np.float32)  # 1 second @ 44100 Hz
 
+
 def test_extract_rhythm_features(sample_audio_mono):
     # Run the function
     result = extract_rhythm_features(sample_audio_mono)
-    
+
     # Check the structure of the result
     assert "bpm" in result
     assert "beats" in result
