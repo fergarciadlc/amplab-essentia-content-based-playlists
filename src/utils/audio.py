@@ -1,4 +1,3 @@
-import os
 from dataclasses import dataclass
 
 import essentia.standard as es
@@ -27,6 +26,11 @@ class AudioData:
             # Average across channels to downmix to mono
             return self.audio_stereo.mean(axis=1)
 
+    @property
+    def duration(self) -> float:
+        """Return the duration of the audio in seconds."""
+        return len(self.audio_mono) / self.sample_rate
+
 
 def load_audio(filepath: str) -> AudioData:
     """Load audio (potentially stereo) and return a dataclass with stereo + metadata."""
@@ -46,8 +50,29 @@ def load_audio(filepath: str) -> AudioData:
 
 
 if __name__ == "__main__":
-    # Usage:
-    audio_data = load_audio("../audio/recorded/mozart_c_major_30sec.wav")
+    import argparse
+    from pathlib import Path
+
+    parser = argparse.ArgumentParser(description="Audio analysis script")
+    parser.add_argument("--audio_file", type=str, help="Path to audio file")
+    args = parser.parse_args()
+
+    audio_file_path = args.audio_file
+    if not audio_file_path:
+        audio_file_path = str(Path("../audio/recorded/techno_loop.mp3").resolve())
+
+    print(
+        """
+Usage:
+    cd src
+    python utils/audio.py [--audio_file path/to/audio/file]
+    """
+    )
+    audio_data = load_audio(audio_file_path)
+    print(f"Audio file {audio_data.filepath} loaded.")
+    print("Sample rate:", audio_data.sample_rate)
     print("Channels:", audio_data.num_channels)
     print("Stereo shape:", audio_data.audio_stereo.shape)
     print("Mono shape:", audio_data.audio_mono.shape)
+    print("codec:", audio_data.codec)
+    print("Duration:", audio_data.duration)
