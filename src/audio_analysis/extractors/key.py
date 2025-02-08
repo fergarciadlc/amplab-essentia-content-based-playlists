@@ -1,18 +1,21 @@
+from typing import Dict, Union
+
 import essentia.standard as es
 
+from audio_analysis.extractors.base_extractor import FeatureExtractor
 from utils.audio import AudioData
 
 
-class KeyExtractor:
+class KeyExtractor(FeatureExtractor):
     def __init__(self, audio_data: AudioData):
-        self.audio_data = audio_data
+        super().__init__(audio_data)
         self.key_extractors = {
             "temperley": es.KeyExtractor(profileType="temperley"),
             "krumhansl": es.KeyExtractor(profileType="krumhansl"),
             "edma": es.KeyExtractor(profileType="edma"),
         }
 
-    def extract(self):
+    def extract(self) -> Dict[str, Union[str, float]]:
         key_results = {}
         for key_type, key_extractor in self.key_extractors.items():
             key, mode, probability = key_extractor(self.audio_data.audio_mono)

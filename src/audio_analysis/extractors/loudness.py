@@ -1,16 +1,20 @@
+from typing import Dict
+
 import essentia.standard as es
 
+from audio_analysis.extractors.base_extractor import FeatureExtractor
 from utils.audio import AudioData
 
 
-class LoudnessEBUR128Extractor:
+class LoudnessEBUR128Extractor(FeatureExtractor):
     def __init__(self, audio_data: AudioData):
-        self.audio_data = audio_data
+        super().__init__(audio_data)
         self.loudness_extractor = es.LoudnessEBUR128(
             sampleRate=self.audio_data.sample_rate
         )
 
-    def extract(self):
+    def extract(self) -> Dict[str, float]:
+        # Extract features using Essentia's LoudnessEBUR128 extractor.
         momentary_loudness, short_term_loudness, integrated_loudness, loudness_range = (
             self.loudness_extractor(self.audio_data.audio_stereo)
         )

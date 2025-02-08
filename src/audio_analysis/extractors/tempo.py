@@ -1,20 +1,21 @@
 import json
 import os
+from typing import Dict
 
 import essentia.standard as es
 
+from audio_analysis.extractors.base_extractor import FeatureExtractor
 from utils.audio import AudioData
 
 
-class TempoCNNExtractor:
+class TempoCNNExtractor(FeatureExtractor):
     def __init__(
         self,
         audio_data: AudioData,
         model_weights: str = "deepsquare-k16-3.pb",
         model_metadata: str = "deepsquare-k16-3.json",
     ):
-
-        self.audio_data = audio_data
+        super().__init__(audio_data)
         self.model_weights = model_weights
         self.model_metadata = model_metadata
         self.model_inference_sample_rate = self._extract_inference_sample_rate()
@@ -34,7 +35,7 @@ class TempoCNNExtractor:
         return metadata["inference"]["sample_rate"]
 
     # Override the extract method to include the model inference
-    def extract(self):
+    def extract(self) -> Dict[str, float]:
         audio_mono = self.audio_data.audio_mono
         if self.audio_data.sample_rate != self.model_inference_sample_rate:
             audio_mono = self.resampler(
