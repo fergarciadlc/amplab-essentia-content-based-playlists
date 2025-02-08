@@ -11,6 +11,9 @@ class AudioData:
     audio_stereo: np.ndarray
     sample_rate: int
     num_channels: int
+    md5: str
+    bit_rate: int
+    codec: str
 
     @property
     def audio_mono(self) -> np.ndarray:
@@ -36,6 +39,9 @@ def load_audio(filepath: str) -> AudioData:
         audio_stereo=audio_stereo,
         sample_rate=sample_rate,
         num_channels=num_channels,
+        md5=md5,
+        bit_rate=bit_rate,
+        codec=codec,
     )
 
 

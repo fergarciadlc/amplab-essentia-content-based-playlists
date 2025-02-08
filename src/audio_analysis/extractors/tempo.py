@@ -81,5 +81,5 @@ Usage:
         model_weights=model_weights_path,
         model_metadata=model_metadata_path,
     )
-    tempo_features = tempo_extractor.extract(audio_data=audio_data)
+    tempo_features = tempo_extractor.extract()
     print(tempo_features)
