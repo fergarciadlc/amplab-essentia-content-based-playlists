@@ -34,7 +34,7 @@ class TempoCNNExtractor:
         return metadata["inference"]["sample_rate"]
 
     # Override the extract method to include the model inference
-    def extract(self, **kwargs):
+    def extract(self):
         audio_mono = self.audio_data.audio_mono
         if self.audio_data.sample_rate != self.model_inference_sample_rate:
             audio_mono = self.resampler(
@@ -52,19 +52,27 @@ class TempoCNNExtractor:
 def file_exists(file_path: str) -> bool:
     return os.path.exists(file_path)
 
+
 if __name__ == "__main__":
-    print("""
+    print(
+        """
 Usage:
     cd src
     python -m audio_analysis.extractors.tempo
-""")
-    from utils.audio import load_audio
-
+"""
+    )
     # define files as paths
     from pathlib import Path
+
+    from utils.audio import load_audio
+
     audio_file_path = str(Path("../audio/recorded/techno_loop.mp3").resolve())
-    model_weights_path = str(Path("audio_analysis/model_weights/deepsquare-k16-3.pb").resolve())
-    model_metadata_path = str(Path("audio_analysis/model_metadata/deepsquare-k16-3.json").resolve())
+    model_weights_path = str(
+        Path("audio_analysis/model_weights/deepsquare-k16-3.pb").resolve()
+    )
+    model_metadata_path = str(
+        Path("audio_analysis/model_metadata/deepsquare-k16-3.json").resolve()
+    )
 
     audio_data = load_audio(audio_file_path)
 
