@@ -23,11 +23,21 @@ class KeyExtractor:
 
 
 if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Audio analysis script")
+    parser.add_argument("--audio_file", type=str, help="Path to audio file")
+    args = parser.parse_args()
+
+    audio_file_path = args.audio_file
+    if not audio_file_path:
+        audio_file_path = str(Path("../audio/recorded/techno_loop.mp3").resolve())
+
     print(
         """
 Usage:
     cd src
-    python -m audio_analysis.extractors.key
+    python -m audio_analysis.extractors.key [--audio_file path/to/audio/file]
     """
     )
     # define files as paths
@@ -35,8 +45,6 @@ Usage:
     from pathlib import Path
 
     from utils.audio import load_audio
-
-    audio_file_path = str(Path("../audio/recorded/mozart_c_major_30sec.wav").resolve())
 
     audio_data: AudioData = load_audio(audio_file_path)
     print(f"Audio file {audio_data.filepath} loaded.")

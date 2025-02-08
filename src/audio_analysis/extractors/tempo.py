@@ -54,11 +54,21 @@ def file_exists(file_path: str) -> bool:
 
 
 if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Audio analysis script")
+    parser.add_argument("--audio_file", type=str, help="Path to audio file")
+    args = parser.parse_args()
+
+    audio_file_path = args.audio_file
+    if not audio_file_path:
+        audio_file_path = str(Path("../audio/recorded/techno_loop.mp3").resolve())
+
     print(
         """
 Usage:
     cd src
-    python -m audio_analysis.extractors.tempo
+    python -m audio_analysis.extractors.tempo [--audio_file path/to/audio/file]
 """
     )
     # define files as paths
@@ -66,7 +76,6 @@ Usage:
 
     from utils.audio import load_audio
 
-    audio_file_path = str(Path("../audio/recorded/techno_loop.mp3").resolve())
     model_weights_path = str(
         Path("audio_analysis/model_weights/deepsquare-k16-3.pb").resolve()
     )
@@ -75,6 +84,8 @@ Usage:
     )
 
     audio_data = load_audio(audio_file_path)
+
+    print(f"Audio file {audio_data.filepath} loaded.")
 
     tempo_extractor = TempoCNNExtractor(
         audio_data=audio_data,
