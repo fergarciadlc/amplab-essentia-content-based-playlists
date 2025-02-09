@@ -2,9 +2,11 @@
 from pathlib import Path
 
 from audio_analysis.extractors import (EffnetDiscogsEmbeddingExtractor,
-                                       KeyExtractor, LoudnessEBUR128Extractor,
+                                       GenreDiscogs400Extractor, KeyExtractor,
+                                       LoudnessEBUR128Extractor,
                                        MusicNNEmbeddingExtractor,
                                        TempoCNNExtractor)
+from audio_analysis.extractors.embeddings import EffnetDiscogsModel
 
 DATA_DIR = Path("../data")
 RAW_DIR = DATA_DIR / "raw" / "MusAV"
@@ -27,5 +29,15 @@ EXTRACTORS = [
     MusicNNEmbeddingExtractor(
         model_weights=str(MODELS_WEIGHTS_DIR / "msd-musicnn-1.pb"),
         model_metadata=str(MODELS_METADATA_DIR / "msd-musicnn-1.json"),
+    ),
+    GenreDiscogs400Extractor(
+        embedding_model=EffnetDiscogsModel(
+            model_weights=str(MODELS_WEIGHTS_DIR / "discogs-effnet-bs64-1.pb"),
+            model_metadata=str(MODELS_METADATA_DIR / "discogs-effnet-bs64-1.json"),
+        ),
+        model_weights=str(MODELS_WEIGHTS_DIR / "genre_discogs400-discogs-effnet-1.pb"),
+        model_metadata=str(
+            MODELS_METADATA_DIR / "genre_discogs400-discogs-effnet-1.json"
+        ),
     ),
 ]
