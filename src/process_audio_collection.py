@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 def process_audio_collection(root_dir: str):
 
     collection_features: List[Dict[str, Any]] = []
-    audio_files = load_all_audio_files(root_dir)[:10]
+    audio_files = load_all_audio_files(root_dir)
 
     for audio_file in tqdm(audio_files, desc="Processing audio files"):
         audio_data = load_audio(audio_file)
