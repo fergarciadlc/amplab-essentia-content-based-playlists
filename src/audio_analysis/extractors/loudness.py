@@ -7,18 +7,11 @@ from utils.audio import AudioData
 
 
 class LoudnessEBUR128Extractor(FeatureExtractor):
-    def __init__(self, audio_data: AudioData):
-        super().__init__(audio_data)
-        self.loudness_extractor = es.LoudnessEBUR128(
-            sampleRate=self.audio_data.sample_rate
-        )
-
-    def extract(self) -> Dict[str, float]:
-        # Extract features using Essentia's LoudnessEBUR128 extractor.
+    def extract(self, audio_data: AudioData) -> Dict[str, float]:
+        loudness_extractor = es.LoudnessEBUR128(sampleRate=audio_data.sample_rate)
         momentary_loudness, short_term_loudness, integrated_loudness, loudness_range = (
-            self.loudness_extractor(self.audio_data.audio_stereo)
+            loudness_extractor(audio_data.audio_stereo)
         )
-
         return {
             "loudness_ebur128_integrated_lufs": integrated_loudness,
             "loudness_ebur128_range_lu": loudness_range,
@@ -51,6 +44,6 @@ Usage:
     audio_data: AudioData = load_audio(audio_file_path)
     print(f"Audio file {audio_data.filepath} loaded.")
 
-    loudness_extractor = LoudnessEBUR128Extractor(audio_data)
-    loudness_results = loudness_extractor.extract()
+    loudness_extractor = LoudnessEBUR128Extractor()
+    loudness_results = loudness_extractor.extract(audio_data)
     print(json.dumps(loudness_results, indent=4))
