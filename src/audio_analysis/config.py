@@ -1,14 +1,14 @@
 # src/audio_analysis/config.py
 from pathlib import Path
 
-from audio_analysis.extractors import (EffnetDiscogsEmbeddingExtractor,
+from audio_analysis.extractors import (DanceabilityExtractor,
+                                       EffnetDiscogsEmbeddingExtractor,
                                        GenreDiscogs400Extractor, KeyExtractor,
                                        LoudnessEBUR128Extractor,
                                        MusicNNEmbeddingExtractor,
                                        TempoCNNExtractor,
                                        VGGishVoiceInstrumentalExtractor)
-from audio_analysis.extractors.embeddings import (EffnetDiscogsModel,
-                                                  VGGishModel)
+from audio_analysis.extractors.embeddings import EffnetDiscogsModel
 
 DATA_DIR = Path("../data")
 RAW_DIR = DATA_DIR / "raw" / "MusAV"
@@ -20,12 +20,9 @@ EFFNET_EMBEDDING_MODEL = EffnetDiscogsModel(
     model_weights=str(MODELS_WEIGHTS_DIR / "discogs-effnet-bs64-1.pb"),
     model_metadata=str(MODELS_METADATA_DIR / "discogs-effnet-bs64-1.json"),
 )
-# VGGISH_EMBEDDING_MODEL = VGGishModel(
-#     model_weights=str(MODELS_WEIGHTS_DIR / "audioset-vggish-3.pb"),
-#     model_metadata=str(MODELS_METADATA_DIR / "voice_instrumental-audioset-vggish-1.json"),
-# )
 
 
+# fmt: off
 EXTRACTORS = [
     TempoCNNExtractor(
         model_weights=str(MODELS_WEIGHTS_DIR / "deepsquare-k16-3.pb"),
@@ -50,11 +47,13 @@ EXTRACTORS = [
     ),
     VGGishVoiceInstrumentalExtractor(
         embedding_model=EFFNET_EMBEDDING_MODEL,
-        model_weights=str(
-            MODELS_WEIGHTS_DIR / "voice_instrumental-discogs-effnet-1.pb"
-        ),
-        model_metadata=str(
-            MODELS_METADATA_DIR / "voice_instrumental-discogs-effnet-1.json"
-        ),
+        model_weights=str(MODELS_WEIGHTS_DIR / "voice_instrumental-discogs-effnet-1.pb"),
+        model_metadata=str(MODELS_METADATA_DIR / "voice_instrumental-discogs-effnet-1.json"),
+    ),
+    DanceabilityExtractor(
+        embedding_model=EFFNET_EMBEDDING_MODEL,
+        model_weights=str(MODELS_WEIGHTS_DIR / "danceability-discogs-effnet-1.pb"),
+        model_metadata=str(MODELS_METADATA_DIR / "danceability-discogs-effnet-1.json"),
     ),
 ]
+# fmt: on

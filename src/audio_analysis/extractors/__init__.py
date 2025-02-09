@@ -1,3 +1,4 @@
+from .danceability import DanceabilityExtractor as DanceabilityExtractor
 from .embeddings import \
     EffnetDiscogsEmbeddingExtractor as EffnetDiscogsEmbeddingExtractor
 from .embeddings import MusicNNEmbeddingExtractor as MusicNNEmbeddingExtractor
