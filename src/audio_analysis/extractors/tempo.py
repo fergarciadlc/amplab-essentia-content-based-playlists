@@ -12,8 +12,8 @@ class TempoCNNExtractor(FeatureExtractor):
     def __init__(
         self,
         audio_data: AudioData,
-        model_weights: str = "deepsquare-k16-3.pb",
-        model_metadata: str = "deepsquare-k16-3.json",
+        model_weights: str = "audio_analysis/model_weights/deepsquare-k16-3.pb",
+        model_metadata: str = "audio_analysis/model_metadata/deepsquare-k16-3.json",
     ):
         super().__init__(audio_data)
         self.model_weights = model_weights
