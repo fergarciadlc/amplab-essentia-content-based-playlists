@@ -1,7 +1,9 @@
 # src/audio_analysis/config.py
 from pathlib import Path
 
-from audio_analysis.extractors import (KeyExtractor, LoudnessEBUR128Extractor,
+from audio_analysis.extractors import (EffnetDiscogsEmbeddingExtractor,
+                                       KeyExtractor, LoudnessEBUR128Extractor,
+                                       MusicNNEmbeddingExtractor,
                                        TempoCNNExtractor)
 
 DATA_DIR = Path("../data")
@@ -18,4 +20,12 @@ EXTRACTORS = [
     ),
     KeyExtractor(profiles=["temperley", "krumhansl", "edma"]),
     LoudnessEBUR128Extractor(),
+    EffnetDiscogsEmbeddingExtractor(
+        model_weights=str(MODELS_WEIGHTS_DIR / "discogs-effnet-bs64-1.pb"),
+        model_metadata=str(MODELS_METADATA_DIR / "discogs-effnet-bs64-1.json"),
+    ),
+    MusicNNEmbeddingExtractor(
+        model_weights=str(MODELS_WEIGHTS_DIR / "msd-musicnn-1.pb"),
+        model_metadata=str(MODELS_METADATA_DIR / "msd-musicnn-1.json"),
+    ),
 ]
