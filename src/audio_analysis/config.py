@@ -7,8 +7,10 @@ from audio_analysis.extractors import (DanceabilityExtractor,
                                        LoudnessEBUR128Extractor,
                                        MusicNNEmbeddingExtractor,
                                        TempoCNNExtractor,
+                                       ValenceArousalExtractor,
                                        VGGishVoiceInstrumentalExtractor)
-from audio_analysis.extractors.embeddings import EffnetDiscogsModel
+from audio_analysis.extractors.embeddings import (EffnetDiscogsModel,
+                                                  MusicCNNModel)
 
 DATA_DIR = Path("../data")
 RAW_DIR = DATA_DIR / "raw" / "MusAV"
@@ -19,6 +21,10 @@ MODELS_METADATA_DIR = Path("audio_analysis/model_metadata")
 EFFNET_EMBEDDING_MODEL = EffnetDiscogsModel(
     model_weights=str(MODELS_WEIGHTS_DIR / "discogs-effnet-bs64-1.pb"),
     model_metadata=str(MODELS_METADATA_DIR / "discogs-effnet-bs64-1.json"),
+)
+MUSICNN_EMBEDDING_MODEL = MusicCNNModel(
+    model_weights=str(MODELS_WEIGHTS_DIR / "msd-musicnn-1.pb"),
+    model_metadata=str(MODELS_METADATA_DIR / "msd-musicnn-1.json"),
 )
 
 
@@ -41,9 +47,7 @@ EXTRACTORS = [
     GenreDiscogs400Extractor(
         embedding_model=EFFNET_EMBEDDING_MODEL,
         model_weights=str(MODELS_WEIGHTS_DIR / "genre_discogs400-discogs-effnet-1.pb"),
-        model_metadata=str(
-            MODELS_METADATA_DIR / "genre_discogs400-discogs-effnet-1.json"
-        ),
+        model_metadata=str(MODELS_METADATA_DIR / "genre_discogs400-discogs-effnet-1.json"),
     ),
     VGGishVoiceInstrumentalExtractor(
         embedding_model=EFFNET_EMBEDDING_MODEL,
@@ -55,5 +59,10 @@ EXTRACTORS = [
         model_weights=str(MODELS_WEIGHTS_DIR / "danceability-discogs-effnet-1.pb"),
         model_metadata=str(MODELS_METADATA_DIR / "danceability-discogs-effnet-1.json"),
     ),
+    ValenceArousalExtractor(
+        embedding_model=MUSICNN_EMBEDDING_MODEL,
+        model_weights=str(MODELS_WEIGHTS_DIR / "emomusic-msd-musicnn-2.pb"),
+        model_metadata=str(MODELS_METADATA_DIR / "emomusic-msd-musicnn-2.json"),
+    )
 ]
 # fmt: on
