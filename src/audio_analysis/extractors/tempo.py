@@ -48,10 +48,6 @@ class TempoCNNExtractor(FeatureExtractor):
         }
 
 
-def file_exists(file_path: str) -> bool:
-    return os.path.exists(file_path)
-
-
 if __name__ == "__main__":
     import argparse
 

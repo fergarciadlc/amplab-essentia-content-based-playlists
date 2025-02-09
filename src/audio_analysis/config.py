@@ -1,7 +1,8 @@
 # src/audio_analysis/config.py
 from pathlib import Path
 
-from audio_analysis.extractors import KeyExtractor, TempoCNNExtractor, LoudnessEBUR128Extractor
+from audio_analysis.extractors import (KeyExtractor, LoudnessEBUR128Extractor,
+                                       TempoCNNExtractor)
 
 DATA_DIR = Path("../data")
 RAW_DIR = DATA_DIR / "raw" / "MusAV"
