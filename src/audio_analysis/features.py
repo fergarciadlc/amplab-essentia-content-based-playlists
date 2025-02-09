@@ -2,14 +2,9 @@
 from datetime import datetime, timezone
 from typing import Any, Dict, List
 
-import audio_analysis.extractors as feature_extractors
+from audio_analysis.config import EXTRACTORS
 from audio_analysis.extractors.base_extractor import FeatureExtractor
 from utils.audio import AudioData, load_audio
-
-EXTRACTORS = [
-    feature_extractors.KeyExtractor,
-    feature_extractors.TempoCNNExtractor,
-]
 
 
 class FeaturesExtractor:
@@ -18,7 +13,6 @@ class FeaturesExtractor:
     ):
         self.audio_data = audio_data
         self.extractors = extractors
-        self.extractors_config = {}
         self.features: Dict[str, Any] = self._initiate_features()
 
     def _initiate_features(self) -> Dict[str, Any]:
@@ -36,8 +30,7 @@ class FeaturesExtractor:
 
     def extract(self):
         for extractor in self.extractors:
-            extractor = extractor(self.audio_data)
-            self.features.update(extractor.extract())
+            self.features.update(extractor.extract(audio_data=self.audio_data))
 
         return self.features
 

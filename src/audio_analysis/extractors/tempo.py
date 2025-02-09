@@ -16,12 +16,12 @@ class TempoCNNExtractor(FeatureExtractor):
     ):
         self.model_weights = model_weights
         self.model_metadata = model_metadata
+        self._check_if_file_exists(self.model_weights)
+        self._check_if_file_exists(self.model_metadata)
+
         self.model_inference_sample_rate = self._extract_inference_sample_rate()
         self.resampler = es.Resample
         self.model = es.TempoCNN(graphFilename=self.model_weights)
-
-        self._check_if_file_exists(self.model_weights)
-        self._check_if_file_exists(self.model_metadata)
 
     def _check_if_file_exists(self, file_path: str):
         if not os.path.exists(file_path):
