@@ -1,7 +1,7 @@
 # src/audio_analysis/config.py
 from pathlib import Path
 
-from audio_analysis.extractors import KeyExtractor, TempoCNNExtractor
+from audio_analysis.extractors import KeyExtractor, TempoCNNExtractor, LoudnessEBUR128Extractor
 
 DATA_DIR = Path("../data")
 RAW_DIR = DATA_DIR / "raw" / "MusAV"
@@ -16,4 +16,5 @@ EXTRACTORS = [
         model_metadata=str(MODELS_METADATA_DIR / "deepsquare-k16-3.json"),
     ),
     KeyExtractor(profiles=["temperley", "krumhansl", "edma"]),
+    LoudnessEBUR128Extractor(),
 ]
