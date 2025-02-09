@@ -1,10 +1,11 @@
 # src/audio_analysis/loaders.py
 import os
+from typing import Tuple
 
 from tqdm import tqdm
 
 
-def find_audio_files(root_dir, extensions=(".mp3",)):
+def find_audio_files(root_dir: str, extensions: Tuple[str] = (".mp3",)):
     """
     Recursively search for audio files within root_dir that have one of the specified extensions.
 
@@ -24,7 +25,7 @@ def find_audio_files(root_dir, extensions=(".mp3",)):
     return audio_files
 
 
-def load_all_audio_files(root_dir, extensions=(".mp3",)):
+def load_all_audio_files(root_dir: str, extensions: Tuple[str] = (".mp3",)):
     """
     Scans the given directory and returns a list of audio file paths.
 
