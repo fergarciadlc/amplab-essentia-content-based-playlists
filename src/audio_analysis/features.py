@@ -2,6 +2,8 @@
 from datetime import datetime, timezone
 from typing import Any, Dict, List
 
+from tqdm import tqdm
+
 from audio_analysis.config import EXTRACTORS
 from audio_analysis.extractors.base_extractor import FeatureExtractor
 from utils.audio import AudioData, load_audio
@@ -28,7 +30,7 @@ class AudioFeaturesExtractor:
     def extract(self, audio_data: AudioData) -> Dict[str, Any]:
         if not self.features:
             self.features = self._initiate_features(audio_data)
-        for extractor in self.extractors:
+        for extractor in tqdm(self.extractors, desc="Extracting features", leave=False):
             self.features.update(extractor.extract(audio_data=audio_data))
 
         return self.features

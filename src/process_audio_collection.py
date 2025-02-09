@@ -1,6 +1,7 @@
 # cd src
 # python process_audio_collection.py
 import logging
+from typing import Any, Dict, List
 
 import essentia
 from tqdm import tqdm
@@ -18,8 +19,9 @@ logger = logging.getLogger(__name__)
 
 def process_audio_collection(root_dir: str):
 
-    audio_files = load_all_audio_files(root_dir)[:10]
-    collection_features = []
+    collection_features: List[Dict[str, Any]] = []
+    audio_files = load_all_audio_files(root_dir)
+
     for audio_file in tqdm(audio_files, desc="Processing audio files"):
         audio_data = load_audio(audio_file)
         audio_features = AudioFeaturesExtractor(
