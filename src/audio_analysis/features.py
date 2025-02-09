@@ -18,9 +18,8 @@ class FeaturesExtractor:
     ):
         self.audio_data = audio_data
         self.extractors = extractors
+        self.extractors_config = {}
         self.features: Dict[str, Any] = self._initiate_features()
-
-        print(f"Init features: {self.features}")
 
     def _initiate_features(self) -> Dict[str, Any]:
         utc_now = datetime.now(timezone.utc)

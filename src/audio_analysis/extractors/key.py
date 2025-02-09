@@ -1,4 +1,4 @@
-from typing import Dict, Union
+from typing import Dict, List, Optional, Union
 
 import essentia.standard as es
 
@@ -7,18 +7,42 @@ from utils.audio import AudioData
 
 
 class KeyExtractor(FeatureExtractor):
-    def __init__(self, audio_data: AudioData):
-        super().__init__(audio_data)
+
+    PROFILE_TYPES = (
+        "diatonic",
+        "krumhansl",
+        "temperley",
+        # "weichai", # RuntimeError: In KeyExtractor.compute: Key: error in Wei Chai algorithm. Wei Chai algorithm does not support minor scales.
+        "tonictriad",
+        "temperley2005",
+        "thpcp",
+        "shaath",
+        "gomez",
+        "noland",
+        # "faraldo", # Is in documentation but not working in Essentia 2.1
+        # "pentatonic", # Is in documentation but not working in Essentia 2.1
+        "edmm",
+        "edma",
+        "bgate",
+        "braw",
+    )
+
+    def __init__(self, profiles: Optional[List[str]] = None):
+        if profiles is None:
+            profiles = self.PROFILE_TYPES
+
+        invalid_profiles = set(profiles) - set(self.PROFILE_TYPES)
+        if invalid_profiles:
+            raise ValueError(f"Invalid profile type(s): {', '.join(invalid_profiles)}")
+
         self.key_extractors = {
-            "temperley": es.KeyExtractor(profileType="temperley"),
-            "krumhansl": es.KeyExtractor(profileType="krumhansl"),
-            "edma": es.KeyExtractor(profileType="edma"),
+            profile: es.KeyExtractor(profileType=profile) for profile in profiles
         }
 
-    def extract(self) -> Dict[str, Union[str, float]]:
+    def extract(self, audio_data: AudioData) -> Dict[str, Union[str, float]]:
         key_results = {}
         for key_type, key_extractor in self.key_extractors.items():
-            key, mode, probability = key_extractor(self.audio_data.audio_mono)
+            key, mode, probability = key_extractor(audio_data.audio_mono)
             key_results[f"key_{key_type}_predict"] = f"{key} {mode}"
             key_results[f"key_{key_type}_probability"] = probability
 
@@ -52,6 +76,6 @@ Usage:
     audio_data: AudioData = load_audio(audio_file_path)
     print(f"Audio file {audio_data.filepath} loaded.")
 
-    key_extractor = KeyExtractor(audio_data)
-    key_results = key_extractor.extract()
+    key_extractor = KeyExtractor(profiles=["temperley", "krumhansl", "edma"])
+    key_results = key_extractor.extract(audio_data)
     print(json.dumps(key_results, indent=4))
