@@ -75,6 +75,20 @@ class MusicCNNModel(EmbeddingModel):
         )
 
 
+class VGGishModel(EmbeddingModel):
+    def __init__(
+        self,
+        model_weights: str = "audio_analysis/model_weights/audioset-vggish-3.pb",
+        model_metadata: str = "audio_analysis/model_metadata/voice_instrumental-audioset-vggish-1.json",
+    ):
+        super().__init__(
+            model=es.TensorflowPredictVGGish,
+            model_weights=model_weights,
+            model_metadata=model_metadata,
+            output="model/vggish/embeddings",
+        )
+
+
 class EffnetDiscogsEmbeddingExtractor(FeatureExtractor):
     def __init__(
         self,

@@ -5,8 +5,10 @@ from audio_analysis.extractors import (EffnetDiscogsEmbeddingExtractor,
                                        GenreDiscogs400Extractor, KeyExtractor,
                                        LoudnessEBUR128Extractor,
                                        MusicNNEmbeddingExtractor,
-                                       TempoCNNExtractor)
-from audio_analysis.extractors.embeddings import EffnetDiscogsModel
+                                       TempoCNNExtractor,
+                                       VGGishVoiceInstrumentalExtractor)
+from audio_analysis.extractors.embeddings import (EffnetDiscogsModel,
+                                                  VGGishModel)
 
 DATA_DIR = Path("../data")
 RAW_DIR = DATA_DIR / "raw" / "MusAV"
@@ -38,6 +40,20 @@ EXTRACTORS = [
         model_weights=str(MODELS_WEIGHTS_DIR / "genre_discogs400-discogs-effnet-1.pb"),
         model_metadata=str(
             MODELS_METADATA_DIR / "genre_discogs400-discogs-effnet-1.json"
+        ),
+    ),
+    VGGishVoiceInstrumentalExtractor(
+        embedding_model=VGGishModel(
+            model_weights=str(MODELS_WEIGHTS_DIR / "audioset-vggish-3.pb"),
+            model_metadata=str(
+                MODELS_METADATA_DIR / "voice_instrumental-audioset-vggish-1.json"
+            ),
+        ),
+        model_weights=str(
+            MODELS_WEIGHTS_DIR / "voice_instrumental-audioset-vggish-1.pb"
+        ),
+        model_metadata=str(
+            MODELS_METADATA_DIR / "voice_instrumental-audioset-vggish-1.json"
         ),
     ),
 ]
