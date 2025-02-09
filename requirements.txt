@@ -1,4 +1,7 @@
-tqdm
-essentia
-essentia-tensorflow
-pytest
+tqdm==4.67.1
+essentia==2.1b6.dev1177
+essentia-tensorflow==2.1b6.dev1177
+pytest==8.3.4
+pandas==2.2.3
+pyarrow==19.0.0
+numpy==1.26.4
