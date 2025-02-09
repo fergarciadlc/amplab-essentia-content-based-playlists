@@ -16,6 +16,15 @@ PROCESSED_DIR = DATA_DIR / "processed"
 MODELS_WEIGHTS_DIR = Path("audio_analysis/model_weights")
 MODELS_METADATA_DIR = Path("audio_analysis/model_metadata")
 
+EFFNET_EMBEDDING_MODEL = EffnetDiscogsModel(
+    model_weights=str(MODELS_WEIGHTS_DIR / "discogs-effnet-bs64-1.pb"),
+    model_metadata=str(MODELS_METADATA_DIR / "discogs-effnet-bs64-1.json"),
+)
+# VGGISH_EMBEDDING_MODEL = VGGishModel(
+#     model_weights=str(MODELS_WEIGHTS_DIR / "audioset-vggish-3.pb"),
+#     model_metadata=str(MODELS_METADATA_DIR / "voice_instrumental-audioset-vggish-1.json"),
+# )
+
 
 EXTRACTORS = [
     TempoCNNExtractor(
@@ -33,27 +42,19 @@ EXTRACTORS = [
         model_metadata=str(MODELS_METADATA_DIR / "msd-musicnn-1.json"),
     ),
     GenreDiscogs400Extractor(
-        embedding_model=EffnetDiscogsModel(
-            model_weights=str(MODELS_WEIGHTS_DIR / "discogs-effnet-bs64-1.pb"),
-            model_metadata=str(MODELS_METADATA_DIR / "discogs-effnet-bs64-1.json"),
-        ),
+        embedding_model=EFFNET_EMBEDDING_MODEL,
         model_weights=str(MODELS_WEIGHTS_DIR / "genre_discogs400-discogs-effnet-1.pb"),
         model_metadata=str(
             MODELS_METADATA_DIR / "genre_discogs400-discogs-effnet-1.json"
         ),
     ),
     VGGishVoiceInstrumentalExtractor(
-        embedding_model=VGGishModel(
-            model_weights=str(MODELS_WEIGHTS_DIR / "audioset-vggish-3.pb"),
-            model_metadata=str(
-                MODELS_METADATA_DIR / "voice_instrumental-audioset-vggish-1.json"
-            ),
-        ),
+        embedding_model=EFFNET_EMBEDDING_MODEL,
         model_weights=str(
-            MODELS_WEIGHTS_DIR / "voice_instrumental-audioset-vggish-1.pb"
+            MODELS_WEIGHTS_DIR / "voice_instrumental-discogs-effnet-1.pb"
         ),
         model_metadata=str(
-            MODELS_METADATA_DIR / "voice_instrumental-audioset-vggish-1.json"
+            MODELS_METADATA_DIR / "voice_instrumental-discogs-effnet-1.json"
         ),
     ),
 ]
