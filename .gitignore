@@ -3,6 +3,9 @@ data/
 audio/
 
 # model weights
+src/audio_analysis/model_weights/*.pb
+
+# model weights in notebook folder
 notebooks/*.pb
 notebooks/*.json
 
