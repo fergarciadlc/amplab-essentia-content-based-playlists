@@ -2,17 +2,17 @@
 # python process_audio_collection.py
 import logging
 from datetime import datetime
-
 # from audio_analysis.config import RAW_DIR
 # from audio_analysis.config import MODELS_METADATA_DIR, MODELS_WEIGHTS_DIR
 from pathlib import Path
 from typing import Any, Dict, List
 
 import essentia
+import numpy as np
 from tqdm import tqdm
 
-import numpy as np
-from audio_analysis.extractors.embeddings import EffnetDiscogsModel, MusicCNNModel
+from audio_analysis.extractors.embeddings import (EffnetDiscogsModel,
+                                                  MusicCNNModel)
 
 MODELS_WEIGHTS_DIR = Path("audio_analysis/model_weights")
 MODELS_METADATA_DIR = Path("audio_analysis/model_metadata")
@@ -32,6 +32,7 @@ logger = logging.getLogger(__name__)
 def extract_audio_embeddings_from_collection(root_dir: str):
 
     collection_embeddings: List[Dict[str, Any]] = []
+
     audio_files = load_all_audio_files(root_dir)
 
     discogs_model = EffnetDiscogsModel(
@@ -52,8 +53,11 @@ def extract_audio_embeddings_from_collection(root_dir: str):
         # print(f"Effnet Discogs embeddings shape: {discogs_embeddings.shape}")
         # print(f"MusicNN embeddings shape: {musicnn_embeddings.shape}")
 
+        filename = Path(audio_file).name
+
         collection_embeddings.append(
             {
+                "filename": filename,
                 "filepath": audio_data.filepath,
                 "discogs_embeddings": discogs_embeddings,
                 "musicnn_embeddings": musicnn_embeddings,
