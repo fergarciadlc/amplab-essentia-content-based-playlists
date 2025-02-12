@@ -4,6 +4,7 @@ from typing import Dict, List, Union
 
 import essentia.standard as es
 import numpy as np
+from tqdm import tqdm
 
 from audio_analysis.extractors.base_extractor import FeatureExtractor
 from utils.audio import AudioData
@@ -129,42 +130,6 @@ class MusicNNEmbeddingExtractor(FeatureExtractor):
             "music_cnn_embeddings_std": float(audio_embeddings.std()),
             "music_cnn_embeddings_shape": str(audio_embeddings.shape),
         }
-
-
-if __name__ == "__main__":
-    print(
-        """
-Usage:
-    cd src
-    python -m audio_analysis.extractors.embeddings [--audio_file path/to/audio/file]
-"""
-    )
-    import argparse
-    import json
-    from pathlib import Path
-
-    from utils.audio import load_audio
-
-    parser = argparse.ArgumentParser(description="Audio analysis script")
-    parser.add_argument("--audio_file", type=str, help="Path to audio file")
-    args = parser.parse_args()
-
-    audio_file_path = args.audio_file
-    if not audio_file_path:
-        audio_file_path = str(Path("../audio/recorded/techno_loop.mp3").resolve())
-
-    audio_data = load_audio(audio_file_path)
-    extractor = EffnetDiscogsEmbeddingExtractor()
-    embeddings = extractor.extract(audio_data)
-    print(json.dumps(embeddings, indent=4))
-
-    print("*" * 80)
-    extractor = MusicNNEmbeddingExtractor()
-    embeddings = extractor.extract(audio_data)
-    print(json.dumps(embeddings, indent=4))
-
-
-from tqdm import tqdm
 
 
 class EffnetDiscogsAllExtractors(FeatureExtractor):
