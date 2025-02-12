@@ -55,8 +55,11 @@ class VGGishVoiceInstrumentalExtractor(FeatureExtractor):
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"File not found: {file_path}")
 
-    def extract(self, audio_data: AudioData) -> Dict[str, str]:
-        embeddings = self.embedding_model.get_audio_embedings(audio_data)
+    def extract(self, audio_data: AudioData, audio_embeddings=None) -> Dict[str, str]:
+        if audio_embeddings is not None and audio_embeddings.any():
+            embeddings = audio_embeddings
+        else:
+            embeddings = self.embedding_model.get_audio_embedings(audio_data)
         predictions = self.model(embeddings)
         predictions_by_class = get_probabilities(predictions, self.classes)
         # best_class, best_prob = get_highest_probability(predictions_by_class)

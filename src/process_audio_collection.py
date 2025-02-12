@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Any, Dict, List
 
 import essentia
+import numpy as np
 from tqdm import tqdm
 
 from audio_analysis.config import EXTRACTORS, PROCESSED_DIR, RAW_DIR
@@ -36,10 +37,12 @@ def process_audio_collection(root_dir: str):
     csv_path = str(PROCESSED_DIR / f"{date_prefix}audio_features.csv")
     parquet_path = str(PROCESSED_DIR / f"{date_prefix}audio_features.parquet")
     db_path = str(PROCESSED_DIR / f"{date_prefix}audio_features.db")
+    npy_path = str(PROCESSED_DIR / f"{date_prefix}audio_features.npy")
 
     store_csv(collection_features, csv_path)
     store_parquet(collection_features, parquet_path)
-    store_sqlite(collection_features, db_path)
+    # store_sqlite(collection_features, db_path)
+    np.save(npy_path, collection_features)
 
 
 def main():

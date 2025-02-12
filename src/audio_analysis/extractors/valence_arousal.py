@@ -10,25 +10,6 @@ from audio_analysis.extractors.embeddings import EmbeddingModel, MusicCNNModel
 from utils.audio import AudioData
 
 
-def get_probabilities(predictions, classes):
-
-    # Average probabilities across time
-    avg_probs = np.mean(predictions, axis=0)
-
-    # Normalize so they sum to 1
-    overall_probs = avg_probs / np.sum(avg_probs)
-
-    # Build a dictionary: {class_name: probability}
-    prob_dict = {classes[i]: overall_probs[i] for i in range(len(classes))}
-    return prob_dict
-
-
-def get_highest_probability(prob_dict):
-    # Find the class with the highest probability
-    best_class = max(prob_dict, key=prob_dict.get)
-    return best_class, prob_dict[best_class]
-
-
 class ValenceArousalExtractor(FeatureExtractor):
     def __init__(
         self,
@@ -61,10 +42,11 @@ class ValenceArousalExtractor(FeatureExtractor):
     def extract(self, audio_data: AudioData) -> Dict[str, str]:
         embeddings = self.embedding_model.get_audio_embedings(audio_data)
         predictions = self.model(embeddings)
-        predictions_by_class = get_probabilities(predictions, self.classes)
+        valence, arousal = np.mean(predictions, axis=0)
         return {
-            "emomusic_valence": float(predictions_by_class["valence"]),
-            "emomusic_arousal": float(predictions_by_class["arousal"]),
+            "emomusic_valence": valence,
+            "emomusic_arousal": arousal,
+            "musicnn_embeddings_mean": np.mean(embeddings, axis=0).tolist(),
         }
 
 

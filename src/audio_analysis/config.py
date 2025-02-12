@@ -29,6 +29,45 @@ MUSICNN_EMBEDDING_MODEL = MusicCNNModel(
 
 
 # fmt: off
+# EXTRACTORS = [
+#     TempoCNNExtractor(
+#         model_weights=str(MODELS_WEIGHTS_DIR / "deepsquare-k16-3.pb"),
+#         model_metadata=str(MODELS_METADATA_DIR / "deepsquare-k16-3.json"),
+#     ),
+#     KeyExtractor(profiles=["temperley", "krumhansl", "edma"]),
+#     LoudnessEBUR128Extractor(),
+#     EffnetDiscogsEmbeddingExtractor(
+#         model_weights=str(MODELS_WEIGHTS_DIR / "discogs-effnet-bs64-1.pb"),
+#         model_metadata=str(MODELS_METADATA_DIR / "discogs-effnet-bs64-1.json"),
+#     ),
+#     MusicNNEmbeddingExtractor(
+#         model_weights=str(MODELS_WEIGHTS_DIR / "msd-musicnn-1.pb"),
+#         model_metadata=str(MODELS_METADATA_DIR / "msd-musicnn-1.json"),
+#     ),
+#     GenreDiscogs400Extractor(
+#         embedding_model=EFFNET_EMBEDDING_MODEL,
+#         model_weights=str(MODELS_WEIGHTS_DIR / "genre_discogs400-discogs-effnet-1.pb"),
+#         model_metadata=str(MODELS_METADATA_DIR / "genre_discogs400-discogs-effnet-1.json"),
+#     ),
+#     VGGishVoiceInstrumentalExtractor(
+#         embedding_model=EFFNET_EMBEDDING_MODEL,
+#         model_weights=str(MODELS_WEIGHTS_DIR / "voice_instrumental-discogs-effnet-1.pb"),
+#         model_metadata=str(MODELS_METADATA_DIR / "voice_instrumental-discogs-effnet-1.json"),
+#     ),
+#     DanceabilityExtractor(
+#         embedding_model=EFFNET_EMBEDDING_MODEL,
+#         model_weights=str(MODELS_WEIGHTS_DIR / "danceability-discogs-effnet-1.pb"),
+#         model_metadata=str(MODELS_METADATA_DIR / "danceability-discogs-effnet-1.json"),
+#     ),
+#     ValenceArousalExtractor(
+#         embedding_model=MUSICNN_EMBEDDING_MODEL,
+#         model_weights=str(MODELS_WEIGHTS_DIR / "emomusic-msd-musicnn-2.pb"),
+#         model_metadata=str(MODELS_METADATA_DIR / "emomusic-msd-musicnn-2.json"),
+#     )
+# ]
+
+from audio_analysis.extractors.embeddings import EffnetDiscogsAllExtractors
+
 EXTRACTORS = [
     TempoCNNExtractor(
         model_weights=str(MODELS_WEIGHTS_DIR / "deepsquare-k16-3.pb"),
@@ -36,33 +75,38 @@ EXTRACTORS = [
     ),
     KeyExtractor(profiles=["temperley", "krumhansl", "edma"]),
     LoudnessEBUR128Extractor(),
-    EffnetDiscogsEmbeddingExtractor(
-        model_weights=str(MODELS_WEIGHTS_DIR / "discogs-effnet-bs64-1.pb"),
-        model_metadata=str(MODELS_METADATA_DIR / "discogs-effnet-bs64-1.json"),
-    ),
-    MusicNNEmbeddingExtractor(
-        model_weights=str(MODELS_WEIGHTS_DIR / "msd-musicnn-1.pb"),
-        model_metadata=str(MODELS_METADATA_DIR / "msd-musicnn-1.json"),
-    ),
-    GenreDiscogs400Extractor(
-        embedding_model=EFFNET_EMBEDDING_MODEL,
-        model_weights=str(MODELS_WEIGHTS_DIR / "genre_discogs400-discogs-effnet-1.pb"),
-        model_metadata=str(MODELS_METADATA_DIR / "genre_discogs400-discogs-effnet-1.json"),
-    ),
-    VGGishVoiceInstrumentalExtractor(
-        embedding_model=EFFNET_EMBEDDING_MODEL,
-        model_weights=str(MODELS_WEIGHTS_DIR / "voice_instrumental-discogs-effnet-1.pb"),
-        model_metadata=str(MODELS_METADATA_DIR / "voice_instrumental-discogs-effnet-1.json"),
-    ),
-    DanceabilityExtractor(
-        embedding_model=EFFNET_EMBEDDING_MODEL,
-        model_weights=str(MODELS_WEIGHTS_DIR / "danceability-discogs-effnet-1.pb"),
-        model_metadata=str(MODELS_METADATA_DIR / "danceability-discogs-effnet-1.json"),
-    ),
+    # EffnetDiscogsEmbeddingExtractor(
+    #     model_weights=str(MODELS_WEIGHTS_DIR / "discogs-effnet-bs64-1.pb"),
+    #     model_metadata=str(MODELS_METADATA_DIR / "discogs-effnet-bs64-1.json"),
+    # ),
+    # MusicNNEmbeddingExtractor(
+    #     model_weights=str(MODELS_WEIGHTS_DIR / "msd-musicnn-1.pb"),
+    #     model_metadata=str(MODELS_METADATA_DIR / "msd-musicnn-1.json"),
+    # ),
     ValenceArousalExtractor(
         embedding_model=MUSICNN_EMBEDDING_MODEL,
         model_weights=str(MODELS_WEIGHTS_DIR / "emomusic-msd-musicnn-2.pb"),
         model_metadata=str(MODELS_METADATA_DIR / "emomusic-msd-musicnn-2.json"),
-    )
+    ),
+    EffnetDiscogsAllExtractors(
+        extractors=[
+            GenreDiscogs400Extractor(
+                embedding_model=None,
+                model_weights=str(MODELS_WEIGHTS_DIR / "genre_discogs400-discogs-effnet-1.pb"),
+                model_metadata=str(MODELS_METADATA_DIR / "genre_discogs400-discogs-effnet-1.json"),
+            ),
+            VGGishVoiceInstrumentalExtractor(
+                embedding_model=None,
+                model_weights=str(MODELS_WEIGHTS_DIR / "voice_instrumental-discogs-effnet-1.pb"),
+                model_metadata=str(MODELS_METADATA_DIR / "voice_instrumental-discogs-effnet-1.json"),
+            ),
+            DanceabilityExtractor(
+                embedding_model=None,
+                model_weights=str(MODELS_WEIGHTS_DIR / "danceability-discogs-effnet-1.pb"),
+                model_metadata=str(MODELS_METADATA_DIR / "danceability-discogs-effnet-1.json"),
+            )
+        ]
+    ),
 ]
+
 # fmt: on
