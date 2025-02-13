@@ -114,7 +114,9 @@ if not df_filtered.empty:
                 "style_genre_discogs400",
                 "emomusic_arousal",
                 "emomusic_valence",
-                "key_temperley_predict", "key_krumhansl_predict", "key_edma_predict"
+                "key_temperley_predict",
+                "key_krumhansl_predict",
+                "key_edma_predict",
             ]
         ].head(100)
     )
@@ -126,64 +128,69 @@ else:
     st.error("No tracks match the current filters!")
     st.stop()
 
-# Similarity settings
-st.sidebar.header("Similarity Settings")
-similarity_method = st.sidebar.radio(
-    "Similarity Method", ["Discogs", "Musicnn", "Hybrid"]
-)
-
-weights = {}
-if similarity_method == "Hybrid":
-    weights["discogs"] = st.sidebar.slider("Discogs Weight", 0.0, 1.0, 0.5)
-    weights["musicnn"] = 1 - weights["discogs"]
-
 
 # Compute similarities
 @st.cache_data
-def compute_similarities(_df, query_track, method, weights=None):
+def compute_similarities(_df, query_track):
     # Get query embeddings
     query_idx = _df[_df["track"] == query_track].index[0]
     discogs_query = _df.loc[query_idx, "discogs_embeddings_mean"]
     musicnn_query = _df.loc[query_idx, "musicnn_embeddings_mean"]
 
-    # Compute similarities
-    discogs_matrix = np.stack(_df["discogs_embeddings_mean"].values)
-    musicnn_matrix = np.stack(_df["musicnn_embeddings_mean"].values)
-
-    discogs_sim = cosine_similarity([discogs_query], discogs_matrix)[0]
-    musicnn_sim = cosine_similarity([musicnn_query], musicnn_matrix)[0]
-
-    return discogs_sim, musicnn_sim
-
-
-discogs_sim, musicnn_sim = compute_similarities(
-    df, selected_track, similarity_method, weights
-)
-
-# Combine similarities
-if similarity_method == "Discogs":
-    scores = discogs_sim
-elif similarity_method == "Musicnn":
-    scores = musicnn_sim
-else:
-    scores = (weights["discogs"] * discogs_sim) + (weights["musicnn"] * musicnn_sim)
-
-# Create results dataframe
-results_df = df[["track", "duration", "tempocnn_bpm", "style_genre_discogs400"]].copy()
-results_df["similarity_score"] = scores
-results_df = results_df[results_df["track"] != selected_track]  # Remove query track
-results_df = results_df.sort_values("similarity_score", ascending=False).head(20)
-
-# Display results
-st.header("Similar Tracks")
-st.write(f"Top 20 tracks similar to: {selected_track}")
-st.dataframe(results_df)
-
-# Audio previews
-st.subheader("Track Previews")
-for track in results_df["track"].head(5):
-    track_row = df[df["track"] == track].iloc[0]
-    st.write(
-        f"**{track}** (Similarity: {results_df[results_df['track'] == track]['similarity_score'].values[0]:.3f})"
+    # Compute similarities using custom function
+    _df = _df.copy()
+    _df["discogs_similarity"] = _df["discogs_embeddings_mean"].apply(
+        lambda x: cosine_similarity(x, discogs_query)
     )
-    st.audio(track_row["filepath"])  # Assumes valid audio file paths
+    _df["musicnn_similarity"] = _df["musicnn_embeddings_mean"].apply(
+        lambda x: cosine_similarity(x, musicnn_query)
+    )
+
+    return _df
+
+
+# Compute similarities
+similarity_df = compute_similarities(df, selected_track)
+
+
+# Create separate result dataframes
+def prepare_results(df, similarity_col, query_track):
+    return (
+        df[df["track"] != query_track]
+        .sort_values(similarity_col, ascending=False)
+        .head(10)[
+            [
+                "track",
+                "duration",
+                "tempocnn_bpm",
+                "style_genre_discogs400",
+                similarity_col,
+            ]
+        ]
+        .reset_index(drop=True)
+    )
+
+
+discogs_results = prepare_results(similarity_df, "discogs_similarity", selected_track)
+musicnn_results = prepare_results(similarity_df, "musicnn_similarity", selected_track)
+
+# Display results side by side
+st.header("Similar Tracks Comparison")
+col1, col2 = st.columns(2)
+
+with col1:
+    st.subheader("Discogs Embedding Results")
+    st.dataframe(discogs_results.style.format({"discogs_similarity": "{:.3f}"}))
+
+with col2:
+    st.subheader("Musicnn Embedding Results")
+    st.dataframe(musicnn_results.style.format({"musicnn_similarity": "{:.3f}"}))
+
+# # Audio previews
+# st.subheader("Track Previews")
+# for track in results_df["track"].head(5):
+#     track_row = df[df["track"] == track].iloc[0]
+#     st.write(
+#         f"**{track}** (Similarity: {results_df[results_df['track'] == track]['similarity_score'].values[0]:.3f})"
+#     )
+#     st.audio(track_row["filepath"])  # Assumes valid audio file paths
