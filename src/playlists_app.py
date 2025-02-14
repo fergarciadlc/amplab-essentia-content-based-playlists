@@ -108,8 +108,16 @@ columns = Columns()
 # Sidebar filters
 st.sidebar.header("Track Filters")
 
-# Music Style Filter
-all_styles = df[columns.style_genre].unique()
+# # Music Style Filter
+# all_styles = df[columns.style_genre].unique()
+# selected_styles = st.sidebar.multiselect(
+#     "Select music styles", options=all_styles, default=[]
+# )
+all_genres = df[columns.genre].unique()
+selected_genres = st.sidebar.multiselect(
+    "Select music genres", options=all_genres, default=[]
+)
+all_styles = df[columns.style].unique()
 selected_styles = st.sidebar.multiselect(
     "Select music styles", options=all_styles, default=[]
 )
@@ -148,9 +156,21 @@ if key_filter:
 # Apply filters
 df_filtered = df.copy()
 
-# Style filter
-if selected_styles:
-    df_filtered = df_filtered[df_filtered[columns.style_genre].isin(selected_styles)]
+# # Style filter
+# if selected_styles:
+#     df_filtered = df_filtered[df_filtered[columns.style_genre].isin(selected_styles)]
+
+# Genre and style filter
+if selected_genres and selected_styles:
+    df_filtered = df_filtered[
+        df_filtered[columns.genre].isin(selected_genres) |
+        df_filtered[columns.style].isin(selected_styles)
+    ]
+elif selected_genres:
+    df_filtered = df_filtered[df_filtered[columns.genre].isin(selected_genres)]
+elif selected_styles:
+    df_filtered = df_filtered[df_filtered[columns.style].isin(selected_styles)]
+
 
 # Tempo filter
 df_filtered = df_filtered[
@@ -183,7 +203,7 @@ if not df_filtered.empty:
                 columns.track,
                 # columns.duration,
                 columns.bpm,
-                columns.style_genre,
+                # columns.style_genre,
                 columns.style,
                 columns.genre,
                 columns.arousal,
