@@ -5,6 +5,18 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
+st.set_page_config(layout="wide")
+st.title("Essentia Playlists Generator 🎶🎸")
+st.header("Find the perfect playlist based on your favorite track! 😎")
+st.markdown(
+    """
+This app allows you to find similar tracks based on audio features and embeddings extracted using the Essentia library.
+You can filter tracks by music genre, tempo, danceability, key, and more.
+
+Developed with ♥️ by [Fernando Garcia de la Cruz](https://fergarciadlc.github.io/)
+    """
+)
+
 
 @dataclass(frozen=True)
 class Columns:
@@ -70,8 +82,6 @@ def rename_columns(df, column_mapping):
 
 # Create an instance to use throughout your code
 columns = Columns()
-
-st.set_page_config(layout="wide")
 
 
 def cosine_similarity(a, b):
@@ -295,17 +305,21 @@ if st.button("Generate Playlists"):
         st.dataframe(discogs_results.style.format({"discogs_similarity": "{:.3f}"}))
         # player for all tracks
         for idx, row in discogs_results.iterrows():
-            audio_path = df_filtered.loc[
-                df_filtered[columns.track] == row[columns.track], columns.filepath
-            ].iloc[0]
-            st.audio(audio_path, format="audio/mp3")
+            track_data = df[df[columns.track] == row[columns.track]]
+            if not track_data.empty:
+                audio_path = track_data[columns.filepath].iloc[0]
+                st.audio(audio_path, format="audio/mp3")
+            else:
+                st.error(f"Audio file not found for track: {row[columns.track]}")
 
     with col2:
         st.subheader("Musicnn Embedding Results")
         st.dataframe(musicnn_results.style.format({"musicnn_similarity": "{:.3f}"}))
         # player for all tracks
         for idx, row in musicnn_results.iterrows():
-            audio_path = df_filtered.loc[
-                df_filtered[columns.track] == row[columns.track], columns.filepath
-            ].iloc[0]
-            st.audio(audio_path, format="audio/mp3")
+            track_data = df[df[columns.track] == row[columns.track]]
+            if not track_data.empty:
+                audio_path = track_data[columns.filepath].iloc[0]
+                st.audio(audio_path, format="audio/mp3")
+            else:
+                st.error(f"Audio file not found for track: {row[columns.track]}")
