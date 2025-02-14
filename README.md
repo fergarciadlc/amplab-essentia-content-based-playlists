@@ -1,7 +1,11 @@
 # Essentia Playlists Generator
+## Demo Video
+
+Watch the demo video for the Essentia Playlists Generator:
+
+[![Essentia Playlists Generator](https://img.youtube.com/vi/HGSQNTFlj-0/sddefault.jpg)](https://youtu.be/HGSQNTFlj-0)
 
 Assignment: [AMPLab 2025 Essentia playlists assignment.md](./AMPLab%202025%20Essentia%20playlists%20assignment.md)
-
 
 Tested on Python 3.9.21, Apple Silicon M1
 
