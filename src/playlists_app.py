@@ -163,8 +163,8 @@ df_filtered = df.copy()
 # Genre and style filter
 if selected_genres and selected_styles:
     df_filtered = df_filtered[
-        df_filtered[columns.genre].isin(selected_genres) |
-        df_filtered[columns.style].isin(selected_styles)
+        df_filtered[columns.genre].isin(selected_genres)
+        | df_filtered[columns.style].isin(selected_styles)
     ]
 elif selected_genres:
     df_filtered = df_filtered[df_filtered[columns.genre].isin(selected_genres)]
@@ -245,10 +245,6 @@ def compute_similarities(_df, query_track):
     return _df
 
 
-# Compute similarities
-similarity_df = compute_similarities(df, selected_track)
-
-
 # Create separate result dataframes
 def prepare_results(df, similarity_col, query_track):
     return (
@@ -256,28 +252,60 @@ def prepare_results(df, similarity_col, query_track):
         .sort_values(similarity_col, ascending=False)
         .head(10)[
             [
-                columns.track,
-                columns.duration,
-                columns.bpm,
-                columns.style_genre,
                 similarity_col,
+                columns.track,
+                columns.genre,
+                columns.style,
+                columns.arousal,
+                columns.valence,
+                columns.instrumental,
+                columns.bpm,
             ]
         ]
         .reset_index(drop=True)
     )
 
 
-discogs_results = prepare_results(similarity_df, "discogs_similarity", selected_track)
-musicnn_results = prepare_results(similarity_df, "musicnn_similarity", selected_track)
+# Listen button: Plays the selected track's audio
+if st.button("Listen to Track"):
+    # Get the audio file path for the selected track.
+    # (Make sure the file is accessible to Streamlit)
+    audio_path = df_filtered.loc[
+        df_filtered[columns.track] == selected_track, columns.filepath
+    ].iloc[0]
+    st.audio(audio_path)  # st.audio accepts a URL, file-like object, or bytes
 
-# Display results side by side
-st.header("Similar Tracks Comparison")
-col1, col2 = st.columns(2)
+# Generate Playlists button: Only computes similarities when pressed
+if st.button("Generate Playlists"):
+    similarity_df = compute_similarities(df, selected_track)
 
-with col1:
-    st.subheader("Discogs Embedding Results")
-    st.dataframe(discogs_results.style.format({"discogs_similarity": "{:.3f}"}))
+    discogs_results = prepare_results(
+        similarity_df, "discogs_similarity", selected_track
+    )
+    musicnn_results = prepare_results(
+        similarity_df, "musicnn_similarity", selected_track
+    )
 
-with col2:
-    st.subheader("Musicnn Embedding Results")
-    st.dataframe(musicnn_results.style.format({"musicnn_similarity": "{:.3f}"}))
+    # Display results side by side
+    st.header("Similar Tracks Comparison")
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader("Discogs Embedding Results")
+        st.dataframe(discogs_results.style.format({"discogs_similarity": "{:.3f}"}))
+        # player for all tracks
+        for idx, row in discogs_results.iterrows():
+            audio_path = df_filtered.loc[
+                df_filtered[columns.track] == row[columns.track], columns.filepath
+            ].iloc[0]
+            st.audio(audio_path, format="audio/mp3")
+
+    with col2:
+        st.subheader("Musicnn Embedding Results")
+        st.dataframe(musicnn_results.style.format({"musicnn_similarity": "{:.3f}"}))
+        # player for all tracks
+        for idx, row in musicnn_results.iterrows():
+            audio_path = df_filtered.loc[
+                df_filtered[columns.track] == row[columns.track], columns.filepath
+            ].iloc[0]
+            st.audio(audio_path, format="audio/mp3")
